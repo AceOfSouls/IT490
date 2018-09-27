@@ -26,7 +26,7 @@ function auth ($user , $pass){
 
     if (mysqli_num_rows($t) == 0 )
         {
-            echo "<br>User and Password combination not found.<br";
+            // echo "<br>User and Password combination not found.<br>";
             return false;
         }
 
