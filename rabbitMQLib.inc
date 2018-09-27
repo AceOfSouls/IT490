@@ -4,8 +4,7 @@ require_once('get_host_info.inc');
 
 class rabbitMQServer
 {
-	private $machine = "";
-	public  $BROKER_HOST;
+	private $machine = ""; public  $BROKER_HOST;
 	private $BROKER_PORT;
 	private $USER;
 	private $PASSWORD;

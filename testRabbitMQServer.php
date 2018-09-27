@@ -4,12 +4,36 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
-function doLogin($username,$password)
-{
-    // lookup username in databas
-    // check password
-    return true;
-    //return false if not valid
+include ("account.php");
+
+$db = mysqli_connect($hostname, $username, $password, $project);
+global $db;
+
+if (mysqli_connect_errno())
+  {
+      echo "Failed to connect to MySQL: " . mysqli_connect_error();
+      exit();
+  }
+echo "Successfully connected to MySQL.<br>";
+
+function auth ($user , $pass){
+
+    global $db;
+    $s = "SELECT * from UserLogin where username = \"$user\" && password = \"$pass\"";
+    $t = mysqli_query($db, $s);
+
+    //echo "<br><br>SQL Statement: ".$s;
+
+    if (mysqli_num_rows($t) == 0 )
+        {
+            echo "<br>User and Password combination not found.<br";
+            return false;
+        }
+
+    else {
+        //echo "<br>Successfully Authenticated.";
+        return true;
+    }
 }
 
 function requestProcessor($request)
@@ -23,7 +47,7 @@ function requestProcessor($request)
   switch ($request['type'])
   {
     case "login":
-      return doLogin($request['username'],$request['password']);
+      return auth($request['username'],$request['password']);
     case "validate_session":
       return doValidate($request['sessionId']);
   }
