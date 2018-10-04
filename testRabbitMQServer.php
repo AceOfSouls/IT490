@@ -14,7 +14,7 @@ if (mysqli_connect_errno())
       echo "Failed to connect to MySQL: " . mysqli_connect_error();
       exit();
   }
-echo "Successfully connected to MySQL.<br>";
+echo "Successfully connected to MySQL.  ";
 
 function auth ($user , $pass){
 
@@ -26,12 +26,12 @@ function auth ($user , $pass){
 
     if (mysqli_num_rows($t) == 0 )
         {
-            // echo "<br>User and Password combination not found.<br>";
+            echo "User and Password combination not found.";
             return false;
         }
 
     else {
-        //echo "<br>Successfully Authenticated.";
+        echo "Successfully Authenticated.";
         return true;
     }
 }
