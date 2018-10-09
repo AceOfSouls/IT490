@@ -1,0 +1,34 @@
+testRabbitMQClient.php: line 2, BROKER_HOST
+
+
+
+
+- e-mail and on-site push notiofications 
+- user profile configured with zip code
+- user can configure auto rescheduling
+- user can enter tracking numbers and reschedule through app
+
+
+
+- set up gmail for testing account/email notifications
+- email
+	- set up account
+	- Notification for when package is scheduled to get rained on. 
+		- everyday at noon, check weather for packages
+		- Sergio - Keeps Data and queries everyday to ross
+		- Dave - runns PHP cron job to run and query on weather/location intesection and sends out php scripts.
+		- Ross - scrapes data from APIs when sergio requests.
+		- Tom - working with dave on on email function and UI.
+	- 
+
+- weather:
+	- condition: rain
+	- add column to user table for email
+	- userID, trackingNumber, deliveryDate, deliveryTime, zipCode, deliveryAddress, condition, 
+		- userID = Grabbed from user table
+		- trackingNumber = Input by user for query
+		- deliveryDate = queried to API from Tracking
+		- deliveryTime = queried to API from Tracking
+		- zipCode = queried to API from Tracking
+		- deliveryAddress = queried to API from Tracking
+		- condition = forecastText

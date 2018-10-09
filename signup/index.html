@@ -16,11 +16,10 @@ margin-right: auto;
 margin-top:20%;
 top: 0px;
 }	
-	
-input{
-    width: 100%;
-}        
-            
+            input{
+                width: 100%;
+
+            }
 #topbar{
 width:100%;
 height: 75px;
@@ -44,12 +43,13 @@ margin-right:5%;
 
 </style>
         
-       <script>
+<script>
     
     function validateForm() {
         
-    var username = document.forms["login"]["username"].value;
-    var password = document.forms["login"]["password"].value;
+    var username = document.forms["signup"]["username"].value;
+    var password = document.forms["signup"]["password"].value;
+    var email = document.forms["signup"]["email"].value;
     if (username == "") {
         alert("Username Cannot be blank");
         return false;
@@ -75,29 +75,33 @@ margin-right:5%;
         }
 } 
 </script>
-         
         
 </head>
     	<body>
 	<div id="topbar"></div>
 	<div id="loginbox">
-	<h1 align="center">Please Log In</h1>
+	<h1 align="center">Welcome to R.O.P.</h1>
         
-    	<form name="login" action="login.php" method="get">     	
-		Enter User:
-        	<br><input placeholder="Username" autocomplete="on" type="text" name="username">
+    	<form name="signup" action="/signup/signup.php" method="get" onsubmit="return validateForm()">     	
+            <p align="center"> Choose a Username:</p>
+        	<input placeholder="Username" autocomplete="on" type="text" name="username">
         	<br>
         	<br>
-       	 	Enter Password: 
-       	 	<br><input placeholder="Password" autocomplete="on" type="password" name="password">
+       	 	<p align="center">Please Create a Password: </p>
+       	 	<input align="center"placeholder="Password" autocomplete="on" type="password" name="password">
         	<br><br>
-            <a align="center" style="font-size: 12px;" href="signup">Don't have an account? Sign up Here.</a>
-        	<br><br>
+            <p align="center">Please Enter E-mail Address:</p>
+        	<input placeholder="E-mail" autocomplete="on" type="text" name="email">
+        	<br>
+        	<br>
+            <br>
 
-        <input align="center" id="submit" name="signin" type="submit" value="Sign In" label="Sign In">
 
+        <input width="100%" id="submit" name="signin" type="submit" value="Sign In" label="Sign In">
+        <br><p align="center" style="color: red;">*** Your E-mail Address will only be ***  used for sending you <br>Notifications about your packages.</p>
+            <br>
         </form>  
-        
+
 	</div>
         <div id="bottomline"></div>
     
