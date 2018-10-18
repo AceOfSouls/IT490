@@ -1,14 +1,6 @@
 <?php
-echo "<head>";
+Require_once("resource/header.html");?>
 
-
-echo "</head>";
-
-echo "<body>";
-
-
-
-echo "</body>";
-
-
+<?php
+Require_once("resource/footer.html");
 ?>

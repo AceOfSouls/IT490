@@ -1,0 +1,4 @@
+Change Directory to root project folder: cd ~/path/of/project
+Add all files to git: sudo git add *
+Commit Changes: sudo git commit -m "Message"
+Push files to git: sudo git push origin branch

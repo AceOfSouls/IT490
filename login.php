@@ -1,59 +1,16 @@
-<!DOCTYPE html>
+<?php 
+Require_once("resource/header.html");
 
-<html>
-	<head>
-
-		<style>	
-body{
-font-family: monospace;                
-            }
-#loginbox{
-    position: relative;
-height: 100%;
-width: 100%;
-margin-left: auto;
-margin-right: auto;
-margin-top:20%;
-top: 0px;
-}	
-            input{
-                width: 100%;
-
-            }
-#topbar{
-width:100%;
-height: 75px;
-position: absolute;
-top:0px;
-left: 0px;
-right: 0px;
-background-color:#004499;
-}
-#bottomline{
-width:90%;
-height: 1px;
-position: absolute;
-bottom:80px;
-background-color:#000000;
-left:0px;
-right:0px;
-margin-left:5%;
-margin-right:5%;
-}
-
-</style>
-        
-</head>
-    	<body>
-	<div id="topbar"></div>
+?>
 	<div id="loginbox">
         
+
 <?php
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
-$client = new rabbitMQClient("RMQ.ini","database");
+$client = new rabbitMQClient("resource/RMQ.ini","database");
 if (isset($argv[1]))
 {
   $msg = $argv[1];
@@ -65,8 +22,10 @@ else
 
 $request = array();
 $request['type'] = "login";
-$request['username'] = $_GET["user"];
-$request['password'] = $_GET["pass"];
+$request['username'] = $_GET["username"];
+$request['password'] = $_GET["password"];
+//$request['username'] = "hi";
+//$request['password'] = "heelo";
 $request['message'] = $msg;
 $response = $client->send_request($request);
 //$response = $client->publish($request);
@@ -74,8 +33,28 @@ $response = $client->send_request($request);
 //echo "client received response: ".PHP_EOL;
 //print_r($response);
 
-if ($response == "1"){
-echo '<p style="font-size:30px; color: green" align="center">Logged In Successfully.';}
+if ($response == true){
+
+$key = SHA1($_GET["username"].time());
+$sessionkey = $key;
+
+$cookie_name = "sessionkey";
+$cookie_value = $sessionkey;
+setcookie($cookie_name, $sessionkey); // 86400 = 1 day
+
+echo $sessionkey."<br>";
+echo $_COOKIE["sessionkey"];
+
+$request = array();
+$request['type'] = "create_session";
+$request['username'] = $_GET["username"];
+$request['sessionkey'] = $sessionkey;
+//$client->send_request($request);
+$response = $client->publish($request);
+
+echo '<p style="font-size:30px; color: green" align="center">Logged In Successfully.';
+header("Location: index.php");
+}
 else{
 echo '<p style="font-size:30px; color: red" align=center>Login Declined</p>';
 }
@@ -83,10 +62,8 @@ echo '<p style="font-size:30px; color: red" align=center>Login Declined</p>';
 echo "\n\n";
 ?>
 </div>
-        <div id="bottomline"></div>
-    
-    </body>
+<?php 
 
-
-</html>
+Require_once("resource/footer.html");
+?>
 
