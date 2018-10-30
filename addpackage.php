@@ -17,6 +17,8 @@ body{
 	
 input{
 	width: 100%;
+	font-size:40px;
+	text-align:center;
 }        
      
 #topbar{
@@ -106,6 +108,12 @@ li{
                 margin-top: 20px;
                 font-size:30px;
             }
+            #title{
+                text-align: center;
+                margin-top: 20px;
+                font-size:60px;
+            }
+		
 		</style>
         
 	<script>
@@ -144,85 +152,24 @@ li{
         
 </head>
     	<body>
-            <div id="topbar"><a href="addpackage.php"><div id="addpkg">+</div></a>
+            <div id="topbar"><a href="welcome.php"><div id="addpkg"><</div></a>
             <?php 
-	require_once('path.inc');
-	require_once('get_host_info.inc');
-	require_once('rabbitMQLib.inc');
-
-	$client = new rabbitMQClient("resource/RMQ.ini","database");
-	if (isset($argv[1]))
-	{
- 	 $msg = $argv[1];
-	}
-	else
-	{
- 	 $msg = "test message";
-	}
-
-$request = array();
-$request['type'] = "get_user";
-$request['sessionID'] = $_COOKIE["sessionkey"];
-$response = $client->send_request($request);
-
-                echo "<div id='welcome'>Welcome, $response</div></div>";
+                echo "<div id='welcome'>New Package</div></div>";
                 ?>
 
 
 
 
-<div style="position: absolute;top:0px;left:10%; margin-top:75px; height: 80%; width: 80%" id="pkgmanager" >
-             <ul>
-            <?php
+<div style="position: absolute;top:0px;left:10%; margin-top:75px; height: 80%; width: 80%" id="pkgmanager" ><br><br>
+ <div id="title">Add Package</div><br>
+	<form name="addpkg" action="addpkg.php" method="get">     	 
+       	 	<br><input placeholder="Z2342ASDKFG4GH345" autocomplete="on" type="text" name="pkgnum">
+        	<br><br>
+
+
+        <input align="center" id="submit" name="submit" type="submit" value="Add" label="Add">
 	
-		require_once('path.inc');
-		require_once('get_host_info.inc');
-		require_once('rabbitMQLib.inc');
-
-		$client = new rabbitMQClient("resource/RMQ.ini","database");
-		if (isset($argv[1]))
-		{
- 		 $msg = $argv[1];
-		}
-		else
-		{
- 		 $msg = "test message";
-		}
-
-		$request = array();
-		$request['type'] = "get_list";
-		$request['sessionID'] = $_COOKIE["sessionkey"];
-		$response = $client->send_request($request);
-
-		//print_r($response);
-		//echo sizeof($response);
-		for ($x = 1; $x <= sizeof($response); $x++){
-		if (substr($response[$x-1]["deliveryTime"],0,2) > 12){
-			$hours = (substr($response[$x-1]["deliveryTime"],0,2)-12);
-			$time = ($hours.":".substr($response[$x-1]["deliveryTime"],3,2)." P.M.");
-		}
-		else if ($time = substr($response[$x-1]["deliveryTime"],0,2)<10){
-			$time = substr($response[$x-1]["deliveryTime"],1,4)." A.M.";
-		}
-		else{
-			$time = substr($response[$x-1]["deliveryTime"],0,5)." A.M.";
-		}
-		
-		echo "<li>";
-                echo '<div id="WeatherIcon"></div>';
-                echo '<div id="tracking">Tracking Number: '.$response[$x-1]["trackNum"].'</div>';
-                echo '<div id="delivery">Address: '.$response[$x-1]["deliveryAddress"].', '.$response[$x-1]["zipCode"].'</div>';       
-                echo '<div id="condition">Expected Condition: '.$response[$x-1]["weatherPredict"].'</div>';   
-                echo '<div id="date">Expected Delivery: '.$response[$x-1]["deliveryDate"].', '.$time.'</div>';   
-                echo '</li>';    
-
-		}
-		?>
-                 
-                          
-                          
-            
-            </ul>
+        </form>  
             </div>
 
     
