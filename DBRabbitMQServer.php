@@ -14,7 +14,7 @@ function doLog($statement)
 {
     $logClient = new rabbitMQClient("main.ini","testServer");
     $request = array();
-    $request['type'] = "DBLog";
+    $request['type'] = "error";
     $request['LogMessage'] = $statement;
     $response = $logClient->publish($request);
 }
@@ -57,8 +57,17 @@ function createSession ($user, $skey)
     $t = mysqli_query($userdb, $s);
     if(mysqli_num_rows($t) > 0)
     {
-        $result = mysqli_fetch_row($t);
+	$result = mysqli_fetch_row($t);
 	$r = $result[0];
+	$p = "SELECT sessionKey from Session where userID = \"$user\"";
+	$q = mysqli_query($userdb, $p);
+	if(mysqli_num_rows($t) > 0)
+	{
+		while($row = mysqli_fetch_assoc($q))
+		{
+			rmSession($row["sessionKey"]);
+		}
+	}
 	$a = "INSERT INTO Session(sessionKey, userID) VALUES (\"$skey\",\"$r\")";
 	mysqli_query($userdb, $a);
 	echo "Session Created!".PHP_EOL;
@@ -143,13 +152,13 @@ function getTrackInfo($trackNumber, $ID)
     if(!empty($response))
     {
 	$dDate = $response['deliveryDate'];
-	$dTime = $response['deliveryTime'];
+	$dTime = $response['pickUpDate'];
 	$zip = $response['zipCode'];
-	$dAddr = $response['deliveryAddress'];
+	$status = $response['status'];
 	$WP = $response['weatherPredict'];
 	
 	global $userdb;
-	$s = "INSERT INTO Tracker(trackNum,deliveryDate,deliveryTime,zipCode,deliveryAddress,weatherPredict,userID) VALUES (\"$trackNumber\",\"$dDate\",\"$zip\",\"$dAddr\",\"$WP\",\"$ID\")";
+	$s = "INSERT INTO Tracker(trackNum,deliveryDate,pickUpDate,zipCode,status,weatherPredict,userID) VALUES (\"$trackNumber\",\"$dDate\",\"$zip\",\"$status\",\"$WP\",\"$ID\")";
 	$t = mysqli_query($userdb, $s);
 	echo "Successfully added package for user \"$ID\"".PHP_EOL;
 	return true;
@@ -207,7 +216,7 @@ function addTracker($trackNum, $seskey)
 //uses session key to find user and sends back an array that each cell contains an array with the values
 function getList($sesKey)
 {
-    $userID = getUserID($seskey);
+    $userID = getUserID($sesKey);
     if($userID == false)
     {
 	$error = "Cannot get list due to userID not being found.".PHP_EOL;
@@ -216,7 +225,7 @@ function getList($sesKey)
     }
 
     global $userdb;
-    $s = "Select trackNum, deliveryDate, deliveryTime, zipCode, deliveryAddress, weatherPredict from Tracker where userID = \"$userID\"";
+    $s = "Select trackNum, deliveryDate, pickUpDate, zipCode, status, weatherPredict from Tracker where userID = \"$userID\"";
     $t = mysqli_query($userdb, $s);
 
     if(mysqli_num_rows($t) == 0)
@@ -313,6 +322,35 @@ function rmPackage($trackNum)
     $t = mysqli_query($userdb, $s);
 }
 
+//Email Alert
+function emailAlert()
+{
+    global $userdb;
+    $s = "Select trackNum,userID from Tracker where weatherPredict = 'rain'";
+    $t = mysqli_query($userdb, $s);
+    $array = array();
+    $int = 0;
+    if(mysqli_num_rows($t) < 1)
+    {
+	return $array;
+    }
+    else
+    {
+	    while(($row = mysqli_fetch_assoc($t)))
+	    {
+		$id = $row['userID'];
+		$p = "Select email from UserLogin where id = \"$id\"";
+		$q = mysqli_query($userdb, $p);
+	
+		$result = mysqli_fetch_row($q);
+		$array[$int]['email'] = $result[0];
+		$array[$int]['trackNum'] = $row['trackNum'];
+		$int++;
+	    }
+	    return $array;
+    }
+}
+
 function requestProcessor($request)
 {
   echo "received request".PHP_EOL;
@@ -338,7 +376,7 @@ function requestProcessor($request)
     case "add_package":
       return addTracker($request['trackNum'], $request['sessionID']);
     case "get_email":
-      return getUser($request['sessionID']);
+      return emailAlert();
     case "remove_user":
       rmUser($request['sessionID']);
     case "remove_package":
