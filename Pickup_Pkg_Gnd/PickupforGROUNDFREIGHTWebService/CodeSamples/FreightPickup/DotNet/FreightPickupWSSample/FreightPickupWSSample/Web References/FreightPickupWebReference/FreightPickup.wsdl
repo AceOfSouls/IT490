@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:error="http://www.ups.com/XMLSchema/XOLTWS/Error/v1.1" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.ups.com/WSDL/XOLTWS/FreightPickup/v1.0" xmlns:fpu="http://www.ups.com/XMLSchema/XOLTWS/FreightPickup/v1.0" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" targetNamespace="http://www.ups.com/WSDL/XOLTWS/FreightPickup/v1.0" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema>
+      <xsd:import schemaLocation="UPSSecurity.xsd" namespace="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" />
+      <xsd:import schemaLocation="Error1.1.xsd" namespace="http://www.ups.com/XMLSchema/XOLTWS/Error/v1.1" />
+      <xsd:import schemaLocation="FreightPickupWebServiceSchema.xsd" namespace="http://www.ups.com/XMLSchema/XOLTWS/FreightPickup/v1.0" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="PickupRequestMessage">
+    <wsdl:part name="Body" element="fpu:FreightPickupRequest" />
+    <wsdl:part name="UPSSecurity" element="upss:UPSSecurity" />
+  </wsdl:message>
+  <wsdl:message name="PickupResponseMessage">
+    <wsdl:part name="Body" element="fpu:FreightPickupResponse" />
+  </wsdl:message>
+  <wsdl:message name="PickupErrorMessage">
+    <wsdl:part name="PickupError" element="error:Errors" />
+  </wsdl:message>
+  <wsdl:portType name="FreightPickupPortType">
+    <wsdl:operation name="ProcessFreightPickup">
+      <wsdl:input name="PickupRequest" message="tns:PickupRequestMessage" />
+      <wsdl:output name="PickupResponse" message="tns:PickupResponseMessage" />
+      <wsdl:fault name="PickupError" message="tns:PickupErrorMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="FreightPickupBinding" type="tns:FreightPickupPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ProcessFreightPickup">
+      <soap:operation soapAction="http://onlinetools.ups.com/webservices/FreightPickupBinding/v1.0" style="document" />
+      <wsdl:input name="PickupRequest">
+        <soap:body use="literal" parts="Body" />
+        <soap:header message="tns:PickupRequestMessage" part="UPSSecurity" use="literal">
+          <soap:headerfault message="tns:PickupErrorMessage" part="PickupError" use="literal" />
+        </soap:header>
+      </wsdl:input>
+      <wsdl:output name="PickupResponse">
+        <soap:body use="literal" parts="Body" />
+      </wsdl:output>
+      <wsdl:fault name="PickupError">
+        <soap:fault use="literal" name="PickupError" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="FreightPickupService">
+    <wsdl:port name="FreightPickupPort" binding="tns:FreightPickupBinding">
+      <soap:address location="https://wwwcie.ups.com/webservices/FreightPickup" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

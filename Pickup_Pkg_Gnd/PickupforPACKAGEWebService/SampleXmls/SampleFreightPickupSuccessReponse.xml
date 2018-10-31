@@ -1,0 +1,18 @@
+- <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Header /> 
+- <soapenv:Body>
+- <freightPickup:FreightPickupResponse xmlns:freightPickup="http://www.ups.com/XMLSchema/XOLTWS/FreightPickup/v1.0">
+- <common:Response xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0">
+- <common:ResponseStatus>
+  <common:Code>1</common:Code> 
+  <common:Description>Success</common:Description> 
+  </common:ResponseStatus>
+- <common:TransactionReference>
+  <common:CustomerContext>String</common:CustomerContext> 
+  <common:TransactionIdentifier>00ciept31cb2nXZs8sDm1H</common:TransactionIdentifier> 
+  </common:TransactionReference>
+  </common:Response>
+  <freightPickup:PickupRequestConfirmationNumber>WBU0003572541</freightPickup:PickupRequestConfirmationNumber> 
+  </freightPickup:FreightPickupResponse>
+  </soapenv:Body>
+  </soapenv:Envelope>
