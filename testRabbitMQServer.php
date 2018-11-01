@@ -96,7 +96,7 @@ function lookUp($trackNum)
 	{
 		echo $ex;
 		doLog($ex);
-		return (no);
+		return "no";
 	}
 	if($deliveryDate != "" and $zipCode != "")
 	{
@@ -107,13 +107,13 @@ function lookUp($trackNum)
 		$error = "No date or zipcode!";
 		echo $error;
 		doLog($error);
-		return (no);
+		return "no";
 	}
-	echo $deliveryDate;
-	echo $zipCode;
-	echo $status;
-	echo $pickUpDate;
-	echo $weatherCon;
+	echo $deliveryDate . "\n";
+	echo $zipCode . "\n";
+	echo $status . "\n";
+	echo $pickUpDate . "\n";
+	echo $weatherCon . "\n";
 	$returna['deliveryDate'] = $deliveryDate;
 	$returna['zipCode'] = $zipCode;
 	$returna['status'] = $status;
