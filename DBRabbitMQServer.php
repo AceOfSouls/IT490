@@ -12,7 +12,7 @@ global $userdb;
 //Send Log statement to Tom to log
 function doLog($statement)
 {
-    $logClient = new rabbitMQClient("main.ini","testServer");
+    $logClient = new rabbitMQClient("logger.ini","testServer");
     $request = array();
     $request['type'] = "error";
     $request['LogMessage'] = $statement;
@@ -149,16 +149,16 @@ function getTrackInfo($trackNumber, $ID)
     $request['Message'] = "Need info on track number.";
     $response = $RClient->send_request($request);
 
-    if(!empty($response))
+    if($response != "no")
     {
-	$dDate = $response['deliveryDate'];
-	$dTime = $response['pickUpDate'];
-	$zip = $response['zipCode'];
-	$status = $response['status'];
+	$dDate = $response['deliveryDate'][0];
+	$pDate = $response['pickUpDate'][0];
+	$zip = $response['zipCode'][0];
+	$status = $response['status'][0];
 	$WP = $response['weatherPredict'];
 	
 	global $userdb;
-	$s = "INSERT INTO Tracker(trackNum,deliveryDate,pickUpDate,zipCode,status,weatherPredict,userID) VALUES (\"$trackNumber\",\"$dDate\",\"$zip\",\"$status\",\"$WP\",\"$ID\")";
+	$s = "INSERT INTO Tracker(trackNum,deliveryDate,pickUpDate,zipCode,status,weatherPredict,userID) VALUES (\"$trackNumber\",\"$dDate\",\"$pDate\",\"$zip\",\"$status\",\"$WP\",\"$ID\")";
 	$t = mysqli_query($userdb, $s);
 	echo "Successfully added package for user \"$ID\"".PHP_EOL;
 	return true;
