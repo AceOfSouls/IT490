@@ -187,7 +187,24 @@ $response = $client->send_request($request);
 //$response = $client->publish($request);
 
 //echo "client received response: ".PHP_EOL;
-print_r($response);
+//print_r($response);
+
+if ($response == "UserHasPack"){
+	echo "Package as already Been Added!";
+	header( "Refresh:5; url=/addpackage.php", true, 303);
+	//header("Location: addpackage.php");
+}
+else if ($response == "PackNotFound"){
+	echo "Package Not Found.";
+	header( "Refresh:5; url=/addpackage.php", true, 303);
+	//header("Location: addpackage.php");
+}
+else if($response == "Success"){
+	echo "Package added Successfully!";
+	header( "Refresh:5; url=/", true, 303);
+	//header("Location: welcome.php");
+}
+
 ?>
             </div>
 
@@ -196,38 +213,3 @@ print_r($response);
 
 
 </html>
-
-
-if ($response == true){
-
-$key = SHA1($_GET["username"].time());
-$sessionkey = $key;
-
-$cookie_name = "sessionkey";
-$cookie_value = $sessionkey;
-setcookie($cookie_name, $sessionkey); // 86400 = 1 day
-
-echo $sessionkey."<br>";
-echo $_COOKIE["sessionkey"];
-
-$request = array();
-$request['type'] = "create_session";
-$request['username'] = $_GET["username"];
-$request['sessionkey'] = $sessionkey;
-//$client->send_request($request);
-$response = $client->publish($request);
-
-echo '<p style="font-size:30px; color: green" align="center">Logged In Successfully.';
-header("Location: index.php");
-}
-else{
-echo '<p style="font-size:30px; color: red" align=center>Login Declined</p>';
-}
-
-echo "\n\n";
-?>
-</div>
-<?php 
-
-Require_once("resource/footer.html");
-?>

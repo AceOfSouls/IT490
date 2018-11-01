@@ -33,7 +33,8 @@ if(isset($_COOKIE["sessionkey"])) {
 }
 ?>
 	<div id="loginbox">
-	<h1 align="center">Please Log In</h1><br>
+	<div id="logo"><img width="100%" src="resource/ROP.png"></div>
+	<h1 id="header" align="center">Please Log In</h1><br>
         
         <?php
         //echo time();
