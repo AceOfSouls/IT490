@@ -39,7 +39,7 @@ function sendOneWayDB ($request)
 	{
 		$msg = "test message";
 	}
-	$response = $client->send_request($request);
+	$response = $client->publish($request);
 }
 
 function sendToDMZ ($request)
@@ -53,7 +53,8 @@ function sendToDMZ ($request)
 	{
 		$msg = "test message";
 	}
-	$response = $client->publish($request);
+	$response = $client->send_request($request);
+	return $response;
 }
 
 function requestProcessor($request)
