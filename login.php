@@ -28,10 +28,10 @@ $request['password'] = $_GET["password"];
 //$request['password'] = "heelo";
 $request['message'] = $msg;
 $response = $client->send_request($request);
+
 //$response = $client->publish($request);
 
 //echo "client received response: ".PHP_EOL;
-print_r($response);
 
 if ($response == true){
 
@@ -42,8 +42,6 @@ $cookie_name = "sessionkey";
 $cookie_value = $sessionkey;
 setcookie($cookie_name, $sessionkey); // 86400 = 1 day
 
-echo $sessionkey."<br>";
-echo $_COOKIE["sessionkey"];
 
 $request = array();
 $request['type'] = "create_session";
@@ -53,10 +51,13 @@ $request['sessionkey'] = $sessionkey;
 $response = $client->publish($request);
 
 echo '<p style="font-size:30px; color: green" align="center">Logged In Successfully.';
-header("Location: index.php");
+echo '<p style="font-size:20px; align="center">Redirecting to Welcome Page.';
+header( "Refresh:2; url=/", true, 303);
 }
 else{
 echo '<p style="font-size:30px; color: red" align=center>Login Declined</p>';
+echo '<p style="font-size:20px; align="center">Redirecting to Login Page.';
+header( "Refresh:2; url=/", true, 303);
 }
 
 echo "\n\n";

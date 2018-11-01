@@ -29,7 +29,6 @@ if(isset($_COOKIE["sessionkey"])) {
 
     		header("Location: welcome.php");
 	} 
-
 }
 ?>
 	<div id="loginbox">
