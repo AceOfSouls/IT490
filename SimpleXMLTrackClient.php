@@ -59,14 +59,18 @@ try {
 		echo $resp->Response->ResponseStatusDescription . "\n";
 		$xml=simplexml_load_string($response) or die("Error: Cannot create object");
 
-		$zipCode = $xml->Shipment->ShipTo->Address->PostalCode . "\n";
-		echo $zipCode;
+		$zip = $xml->Shipment->ShipTo->Address->PostalCode . "\n";
+		echo $zip;
 		$pickUpDate = $xml->Shipment->PickupDate . "\n";
 		echo $pickUpDate;
 		$deliveryDate = $xml->Shipment->Package->DeliveryDate . "\n";
 		echo $deliveryDate;
-		$status = $xml->Shipment->Package->Activity[0]->Status->StatusType->Description;
+		$status = $xml->Shipment->Package->Activity[0]->Status->StatusType->Description . "\n";
 		echo $status;
+		return $zip;
+		return $pickUpDate;
+		return $deliveryDate;
+		return $status;
 
 	}
 	Header ( 'Content-type: text/xml' );

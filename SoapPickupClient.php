@@ -11,7 +11,7 @@
 
   function processPickupCreation()
   {
-      //create soap request
+    //create soap request
     $requestoption['RequestOption'] = '1';
     $request['Request'] = $requestoption;
     $request['RatePickupIndicator'] = 'N';
