@@ -226,7 +226,6 @@ function getList($sesKey)
 	echo $error;
 	exit();
     }
-
     global $userdb;
     $s = "Select trackNum, deliveryDate, pickUpDate, zipCode, status, weatherPredict from Tracker where userID = \"$userID\"";
     $t = mysqli_query($userdb, $s);
