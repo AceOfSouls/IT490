@@ -143,6 +143,7 @@ function getUserID($seskey)
 function getTrackInfo($trackNumber, $ID)
 {
     $RClient = new rabbitMQClient("main.ini","testServer");
+    //$RClient = new rabbitMQClient("testconnect.ini","testServer");
     $request = array();
     $request['type'] = "getPack";
     $request['trackNum'] = $trackNumber;
@@ -193,6 +194,8 @@ function addTracker($trackNum, $seskey)
     if(mysqli_num_rows($t) == 0)
     {
 	echo "Package not found in DB for User, now sending a request to find package.".PHP_EOL;
+	echo $trackNum;
+	echo $userID;
 	$result = getTrackInfo($trackNum, $userID);
 	if($result == true)
 	{
