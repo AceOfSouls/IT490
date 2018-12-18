@@ -2,7 +2,7 @@ Request:
 <?xml version="1.0"?>
 <AccessRequest><AccessLicenseNumber>DD51945E636B0D08</AccessLicenseNumber><UserId>APOLLO42 M</UserId><Password>Fight9091479</Password></AccessRequest>
 <?xml version="1.0"?>
-<TrackRequest><Request><RequestAction>Track</RequestAction><RequestOption>activity</RequestOption></Request><TrackingNumber>1ZW7267W00151730 </TrackingNumber></TrackRequest>
+<TrackRequest><Request><RequestAction>Track</RequestAction><RequestOption>activity</RequestOption></Request><TrackingNumber>123456789012</TrackingNumber></TrackRequest>
 
 Response: 
 <?xml version="1.0"?>

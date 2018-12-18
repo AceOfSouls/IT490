@@ -3,6 +3,7 @@
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
+require_once('fedex-common.php5');
 
 function doLog($statement)
 {
@@ -12,7 +13,6 @@ function doLog($statement)
     $request['LogMessage'] = $statement;
     $response = $logClient->publish($request);
 }
-
 function lookUp($trackNum)
 {
 	$accessLicenseNumber = "DD51945E636B0D08";
@@ -52,9 +52,9 @@ function lookUp($trackNum)
 		);
 	
 		// get request
-		$request = stream_context_create ( $form );
-		$browser = fopen ( $endpointurl, 'rb', false, $request );
-		if (! $browser) 
+		$request = stream_context_create($form);
+		$browser = fopen ( $endpointurl, 'rb', false, $request);
+		if (!$browser) 
 		{
 			throw new Exception ( "Connection failed." );
 		}
@@ -77,17 +77,15 @@ function lookUp($trackNum)
 		
 			// get response status
 			$resp = new SimpleXMLElement ( $response );
-			echo $resp->Response->ResponseStatusDescription . "\n";
+			//echo $resp->Response->ResponseStatusDescription . "\n";
 			
 			$xml=simplexml_load_string($response) or die("Error: Cannot create object");
-			print_r($xml);
+			//print_r($xml);
 			
 			$zipCode = $xml->Shipment->ShipTo->Address->PostalCode;
-			
 			$pickUpDate = $xml->Shipment->PickupDate;
 			
 			$deliveryDate = $xml->Shipment->Package->DeliveryDate;
-			
 			$status = $xml->Shipment->Package->Activity[0]->Status->StatusType->Description;
 		}
 		//Header ( 'Content-type: text/xml' );
@@ -96,9 +94,74 @@ function lookUp($trackNum)
 	{
 		echo $ex;
 		doLog($ex);
-		return "no";
 	}
-	if($deliveryDate != "" and $zipCode != "")
+	
+	if ($deliveryDate == "" and $zipCode == "" and $status == "")
+	{
+		// Copyright 2009, FedEx Corporation. All rights reserved.
+		// Version 6.0.0
+
+		//The WSDL is not included with the sample code.
+		//Please include and reference in $path_to_wsdl variable.
+		$path_to_wsdl = "TrackService_v16.wsdl";
+		ini_set("soap.wsdl_cache_enabled", "0");
+		$client = new SoapClient($path_to_wsdl, array('trace' => 1)); 
+		// Refer to http://us3.php.net/manual/en/ref.soap.php for more information
+		$requestf['WebAuthenticationDetail'] = array('UserCredential' =>array('Key' => 'UgYvVwdDRFHPf5LO', 'Password' => 		'NOurG0hnZTY93FkD1WNsqVdXE'));
+
+		$requestf['ClientDetail'] = array('AccountNumber' => '510087780', 'MeterNumber' => '119097737');
+
+		$requestf['TransactionDetail'] = array('CustomerTransactionId' => '*** Track Request v16 using PHP ***');
+		$requestf['Version'] = array(
+			'ServiceId' => 'trck',
+			'Major' => '16',
+			'Intermediate' => '0',
+			'Minor' => '0');
+
+		$requestf['SelectionDetails'] = array(
+			'CarrierCode'=> 'FDXE',
+			'PackageIdentifier' => array(
+				'Type' => 'TRACKING_NUMBER_OR_DOORTAG',
+				'Value' => $trackNum)); // Replace 'XXX' with a valid tracking identifier
+		$requestf['IncludeDetailedScans'] = true;
+		try
+		{
+			if(setEndpoint('changeEndpoint'))
+			{
+				$newLocation = $client->__setLocation(setEndpoint('endpoint'));
+			}
+			$response = $client->track($requestf);
+	    		if ($response -> HighestSeverity != 'FAILURE' && $response -> HighestSeverity != 'ERROR')
+	    		{
+		
+	    			echo '<table border="1">';
+	    			echo '<tr><th>Tracking Details</th><th>&nbsp;</th></tr>'.PHP_EOL;
+	
+				//var_dump($response);
+				$zipCode = array("Fedex:HasNoZip");
+				$deliveryDate = $response->CompletedTrackDetails->TrackDetails[0]->DatesOrTimes[0]->DateOrTimestamp;
+				$originalDate = date_create($deliveryDate);
+    				$Date = date_format($originalDate,"Ymd");
+				$deliveryDate = array($Date);
+				echo $deliveryDate;
+				$status = array("Last City: ".$response->CompletedTrackDetails->TrackDetails[0]->LastUpdatedDestinationAddress->City);
+				$pickUpDate = array($Date);
+	        		//trackDetails($response->TrackDetails, '');
+				echo '</table>'.PHP_EOL;
+	        		//printSuccess($client, $response);
+	    		}
+	    		else
+	    		{
+	        		printError($client, $response);
+	    		}
+	    		writeToLog($client);    // Write to log file
+		} 
+		catch (SoapFault $exception) 
+		{
+	  		printFault($exception, $client);
+		}
+	}
+	if($deliveryDate != "" and ($zipCode != "" or $zipCode != "Fedex:HasNoZip"))
 	{
 		$weatherCon = lookUpWeather($zipCode, $deliveryDate);
 	}
@@ -119,8 +182,8 @@ function lookUp($trackNum)
 	$returna['status'] = $status;
 	$returna['pickUpDate'] = $pickUpDate;
 	$returna['weatherPredict'] = $weatherCon;
-	
-	return $returna;
+
+	return $returna;	
 }
 
 function lookUpWeather($zip, $date)
@@ -135,7 +198,7 @@ function lookUpWeather($zip, $date)
     $json = curl_exec($session);
     // Convert JSON to PHP object
     $phpObj =  json_decode($json);
-    var_dump($phpObj);
+    //var_dump($phpObj);
     $originalDate = date_create($date);
     $Date = date_format($originalDate,"Y M d");
     $result = "";
